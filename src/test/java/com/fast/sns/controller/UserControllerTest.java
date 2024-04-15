@@ -2,6 +2,7 @@ package com.fast.sns.controller;
 
 import com.fast.sns.controller.request.UserJoinRequest;
 import com.fast.sns.controller.request.UserLoginRequest;
+import com.fast.sns.exception.ErrorCode;
 import com.fast.sns.exception.SnsApplicationException;
 import com.fast.sns.model.User;
 import com.fast.sns.service.UserService;
@@ -58,7 +59,7 @@ public class UserControllerTest {
         String password = "password";
 
         //TODO: mocking
-        when(userService.join(username,password)).thenThrow(new SnsApplicationException());
+        when(userService.join(username,password)).thenThrow(new SnsApplicationException(ErrorCode.DUPLICATED_USER_NAME,""));
 
 
         mockMvc.perform(post("/api/v1/users/join")
@@ -94,7 +95,7 @@ public class UserControllerTest {
 
         //TODO: mocking
 
-        when(userService.login(username,password)).thenThrow(new SnsApplicationException());
+        when(userService.login(username,password)).thenThrow(new SnsApplicationException(ErrorCode.DUPLICATED_USER_NAME, ""));
 
         mockMvc.perform(post("/api/v1/users/join")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -110,7 +111,7 @@ public class UserControllerTest {
         String password = "password";
 
         //TODO: mocking
-        when(userService.login(username,password)).thenThrow(new SnsApplicationException());
+        when(userService.login(username,password)).thenThrow(new SnsApplicationException(ErrorCode.DUPLICATED_USER_NAME, ""));
 
 
         mockMvc.perform(post("/api/v1/users/join")
