@@ -1,5 +1,6 @@
 package com.fast.sns.service;
 
+import com.fast.sns.SnsApplication;
 import com.fast.sns.exception.ErrorCode;
 import com.fast.sns.exception.SnsApplicationException;
 import com.fast.sns.model.User;
@@ -27,6 +28,13 @@ public class UserService {
 
     @Value("${jwt.token.expired-time-ms}")
     private Long expiredTimeMs;
+
+    public User loadByUSerName(String username) {
+        return userEntityRepository.findByUserName(username).map(User::fromEntity).orElseThrow(() ->
+                new SnsApplicationException(ErrorCode.USER_NOT_FOUND, String.format("%s not founded", username))
+        );
+
+    }
 
     //TODO: implement
     @Transactional
