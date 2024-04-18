@@ -4,6 +4,8 @@ import com.fast.sns.controller.request.PostCreateRequest;
 import com.fast.sns.controller.request.PostModifyRequest;
 import com.fast.sns.exception.ErrorCode;
 import com.fast.sns.exception.SnsApplicationException;
+import com.fast.sns.fixture.PostEntityFixture;
+import com.fast.sns.model.Post;
 import com.fast.sns.service.PostService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -74,6 +76,9 @@ public class PostControllerTest {
         String title = "title";
         String body = "body";
 
+
+        when(postService.modify(eq(title), eq(body), any(), any()))
+                .thenReturn(Post.fromEntity(PostEntityFixture.get("username", 1, 1)));
         mockMvc.perform(put("/api/v1/posts/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(new PostModifyRequest("title", "body"))))
