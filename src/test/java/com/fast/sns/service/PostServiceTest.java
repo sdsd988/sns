@@ -16,7 +16,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.Optional;
 
-import static jdk.internal.vm.compiler.word.LocationIdentity.any;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -70,7 +69,7 @@ public class PostServiceTest {
         String username = "username";
         Integer postId = 1;
 
-        PostEntity postEntity = PostEntityFixture.get(username, postId);
+        PostEntity postEntity = PostEntityFixture.get(username, postId,1);
         UserEntity userEntity = postEntity.getUser();
         //mocking
 
@@ -89,7 +88,7 @@ public class PostServiceTest {
         String username = "username";
         Integer postId = 1;
 
-        PostEntity postEntity = PostEntityFixture.get(username, postId);
+        PostEntity postEntity = PostEntityFixture.get(username, postId,1);
         UserEntity userEntity = postEntity.getUser();
         //mocking
 
@@ -110,9 +109,9 @@ public class PostServiceTest {
         String username = "username";
         Integer postId = 1;
 
-        PostEntity postEntity = PostEntityFixture.get(username, postId);
+        PostEntity postEntity = PostEntityFixture.get(username, postId,1);
         UserEntity userEntity = postEntity.getUser();
-        UserEntity writer = UserEntityFixture.get("username1", "password");
+        UserEntity writer = UserEntityFixture.get("username1", "password",2);
         //mocking
 
         PostEntity mockPostEntity = mock(PostEntity.class);

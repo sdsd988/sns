@@ -41,7 +41,7 @@ public class UserServiceTest {
         //mocking
         when(userEntityRepository.findByUserName(username)).thenReturn(Optional.empty());
         when(encoder.encode(password)).thenReturn("encrypt_password");
-        when(userEntityRepository.save(any())).thenReturn(UserEntityFixture.get(username, password));
+        when(userEntityRepository.save(any())).thenReturn(UserEntityFixture.get(username, password,1));
 
         assertDoesNotThrow(() -> userService.join(username,password));
 
@@ -51,7 +51,7 @@ public class UserServiceTest {
     void signup_fail_duplicated_username() {
         String username = "username";
         String password = "password";
-        UserEntity fixture = UserEntityFixture.get(username, password);
+        UserEntity fixture = UserEntityFixture.get(username, password,1);
 
 
         //mocking
@@ -68,7 +68,7 @@ public class UserServiceTest {
         String username = "userName";
         String password = "password";
 
-        UserEntity fixture = UserEntityFixture.get(username, password);
+        UserEntity fixture = UserEntityFixture.get(username, password,1);
 
         //mocking
         when(userEntityRepository.findByUserName(username)).thenReturn(Optional.of(fixture));
@@ -97,7 +97,7 @@ public class UserServiceTest {
         String username = "username";
         String password = "password";
         String wrongPassword = "wrong_password";
-        UserEntity fixture = UserEntityFixture.get(username, password);
+        UserEntity fixture = UserEntityFixture.get(username, password,1);
 
         //mocking
         when(userEntityRepository.findByUserName(username)).thenReturn(Optional.of(fixture));
