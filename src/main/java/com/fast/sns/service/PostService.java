@@ -23,4 +23,15 @@ public class PostService {
         PostEntity postEntity = PostEntity.of(title, body, userEntity);
         postEntityRepository.save(postEntity);
     }
+
+    public void modify(String title, String body, String username,Integer postId) {
+        UserEntity userEntity = userEntityRepository.findByUserName(username)
+                .orElseThrow(() -> new SnsApplicationException(ErrorCode.USER_NOT_FOUND, String.format("userName is %s", username)));
+
+        // post exist
+
+
+
+        // post permission
+    }
 }
