@@ -2,16 +2,12 @@ package com.fast.sns.service;
 
 import com.fast.sns.exception.ErrorCode;
 import com.fast.sns.exception.SnsApplicationException;
+import com.fast.sns.model.AlarmArgs;
+import com.fast.sns.model.AlarmType;
 import com.fast.sns.model.Comment;
 import com.fast.sns.model.Post;
-import com.fast.sns.model.entity.CommentEntity;
-import com.fast.sns.model.entity.LikeEntity;
-import com.fast.sns.model.entity.PostEntity;
-import com.fast.sns.model.entity.UserEntity;
-import com.fast.sns.repository.CommentEntityRepository;
-import com.fast.sns.repository.LikeEntityRepository;
-import com.fast.sns.repository.PostEntityRepository;
-import com.fast.sns.repository.UserEntityRepository;
+import com.fast.sns.model.entity.*;
+import com.fast.sns.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,11 +24,12 @@ public class PostService {
     private final UserEntityRepository userEntityRepository;
     private final LikeEntityRepository likeEntityRepository;
     private final CommentEntityRepository commentEntityRepository;
+    private final AlarmEntityRepository alarmEntityRepository;
 
     @Transactional
     public void create(String title, String body, String username) {
-        UserEntity userEntity = userEntityRepository.findByUserName(username)
-                .orElseThrow(() -> new SnsApplicationException(ErrorCode.USER_NOT_FOUND, String.format("userName is %s", username)));
+        UserEntity userEntity = getUserEntityOrException(username);
+
         PostEntity postEntity = PostEntity.of(title, body, userEntity);
         postEntityRepository.save(postEntity);
     }
@@ -70,6 +67,8 @@ public class PostService {
                     String.format("%s has no permission with %s", username, postId));
         }
 
+        likeEntityRepository.deleteAllByPost(postEntity);
+        commentEntityRepository.deleteAllByPost(postEntity);
         postEntityRepository.delete(postEntity);
     }
 
@@ -100,9 +99,14 @@ public class PostService {
 
         //like.save
         likeEntityRepository.save(LikeEntity.of(userEntity, postEntity));
+
+        alarmEntityRepository.save(AlarmEntity.of(postEntity.getUser(),
+                AlarmType.NEW_LIKE_ON_POST,
+                new AlarmArgs(userEntity.getId(),
+                        postEntity.getId())));
     }
 
-    public Integer likeCount(Integer postId) {
+    public Long likeCount(Integer postId) {
         PostEntity postEntity = getPostEntityOrException(postId);
 
 
@@ -120,8 +124,13 @@ public class PostService {
         PostEntity postEntity = getPostEntityOrException(postId);
         UserEntity userEntity = getUserEntityOrException(username);
 
-//        comment.save
+        //comment.save
         commentEntityRepository.save(CommentEntity.of(userEntity, postEntity, comment));
+
+        alarmEntityRepository.save(AlarmEntity.of(postEntity.getUser(),
+                AlarmType.NEW_COMMENT_ON_POST,
+                new AlarmArgs(userEntity.getId(),
+                postEntity.getId())));
     }
 
     public Page<Comment> getComments(Integer postId, Pageable pageable) {

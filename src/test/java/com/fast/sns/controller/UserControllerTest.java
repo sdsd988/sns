@@ -137,7 +137,7 @@ public class UserControllerTest {
         mockMvc.perform(get("/api/v1/users/alram")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isUnauthorized());
     }
 
 }
