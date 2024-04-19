@@ -9,4 +9,6 @@ public class UserJoinRequest {
 
     private String name;
     private String password;
+
+    fsfjhskjhfsjsjkfhk
 }
