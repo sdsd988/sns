@@ -28,8 +28,8 @@ public class PostService {
 
     @Transactional
     public void create(String title, String body, String username) {
-        UserEntity userEntity = userEntityRepository.findByUserName(username)
-                .orElseThrow(() -> new SnsApplicationException(ErrorCode.USER_NOT_FOUND, String.format("userName is %s", username)));
+        UserEntity userEntity = getUserEntityOrException(username);
+
         PostEntity postEntity = PostEntity.of(title, body, userEntity);
         postEntityRepository.save(postEntity);
     }
