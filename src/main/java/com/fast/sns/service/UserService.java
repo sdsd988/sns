@@ -3,8 +3,10 @@ package com.fast.sns.service;
 import com.fast.sns.SnsApplication;
 import com.fast.sns.exception.ErrorCode;
 import com.fast.sns.exception.SnsApplicationException;
+import com.fast.sns.model.Alarm;
 import com.fast.sns.model.User;
 import com.fast.sns.model.entity.UserEntity;
+import com.fast.sns.repository.AlarmEntityRepository;
 import com.fast.sns.repository.UserEntityRepository;
 import com.fast.sns.util.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ import java.util.Optional;
 public class UserService {
 
     private final UserEntityRepository userEntityRepository;
+    private final AlarmEntityRepository alarmEntityRepository;
     private final BCryptPasswordEncoder encoder;
 
     @Value("${jwt.secret-key}")
@@ -72,10 +75,12 @@ public class UserService {
         return token;
     }
 
-    public Page<Void> alarmList(String username, Pageable pageable) {
+    public Page<Alarm> alarmList(String username, Pageable pageable) {
 
+        UserEntity userEntity = userEntityRepository.findByUserName(username).orElseThrow(() ->
+                new SnsApplicationException(ErrorCode.USER_NOT_FOUND, String.format("%s not found", username)));
 
-        return Page.empty();
+        return alarmEntityRepository.findAllByUser(userEntity, pageable).map(Alarm::fromEntity);
     }
 
 
