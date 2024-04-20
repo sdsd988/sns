@@ -18,9 +18,15 @@ spring:
     driver-class-name: org.postgresql.Driver
   redis:
     url: redis://localhost:6379
+  kafka:
+    properties:
+    consumer:
+      bootstrap-servers: 
+
 
 jwt:
   secret-key: fast-campus.simple_sns_2022_secret_key
   # 30 days
   token.expired-time-ms: 2592000000
+
 

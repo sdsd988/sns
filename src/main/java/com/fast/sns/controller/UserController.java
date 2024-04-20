@@ -9,6 +9,7 @@ import com.fast.sns.controller.response.UserLoginResponse;
 import com.fast.sns.exception.ErrorCode;
 import com.fast.sns.exception.SnsApplicationException;
 import com.fast.sns.model.User;
+import com.fast.sns.service.AlarmService;
 import com.fast.sns.service.UserService;
 import com.fast.sns.util.ClassUtils;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 
 @RestController
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final AlarmService alarmService;
 
     @PostMapping("/join")
     public Response<UserJoinResponse> join(@RequestBody UserJoinRequest request) {
@@ -41,10 +44,16 @@ public class UserController {
     public Response<Page<AlarmResponse>> alarm(Pageable pageable, Authentication authentication) {
 
         User user = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), User.class)
-                .orElseThrow(() -> new SnsApplicationException(ErrorCode.INTERNAL_SERVER_ERROR,"Casting to User class failed"));
+                .orElseThrow(() -> new SnsApplicationException(ErrorCode.INTERNAL_SERVER_ERROR, "Casting to User class failed"));
 //        User user = (User) authentication.getPrincipal();
         return Response.success(userService.alarmList(user.getId(), pageable).map(AlarmResponse::fromAlarm));
+    }
 
+    @GetMapping("/alarm/subscribe")
+    public SseEmitter subscribe(Authentication authentication) {
+        User user = ClassUtils.getSafeCastInstance(authentication.getPrincipal(), User.class)
+                .orElseThrow(() -> new SnsApplicationException(ErrorCode.INTERNAL_SERVER_ERROR, "Casting to User class failed"));
 
+        return alarmService.connectAlarm(user.getId());
     }
 }
