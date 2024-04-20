@@ -21,7 +21,7 @@ spring:
   kafka:
     properties:
     consumer:
-      bootstrap-servers: 
+      bootstrap-servers:
 
 
 jwt:
